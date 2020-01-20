@@ -35,11 +35,7 @@ Performance::Performance(const char *InputFile)
     P->extract("payoff coefficients", this->lambda_, size);
 }
 
-Performance::~Performance(){
-    if (lambda_) {
-        pnl_vect_free(&lambda_);
-    }
-}
+Performance::~Performance(){}
 
 double Performance::payoff(const PnlMat *path)
 {

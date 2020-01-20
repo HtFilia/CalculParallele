@@ -41,12 +41,7 @@ Basket::Basket(const char *InputFile)
     delete P;
 }
 
-Basket::~Basket()
-{
-    if (lambda_) {
-        pnl_vect_free(&lambda_);
-    }
-}
+Basket::~Basket() {}
 
 double Basket::payoff(const PnlMat *path)
 {

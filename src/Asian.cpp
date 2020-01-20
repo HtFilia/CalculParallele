@@ -34,11 +34,7 @@ Asian::Asian(const char *InputFile) {
     P->extract("payoff coefficients", this->lambda_, size);
 }
 
-Asian::~Asian() {
-    if (lambda_) {
-        pnl_vect_free(&lambda_);
-    }
-};
+Asian::~Asian() {}
 
 double Asian::payoff(const PnlMat *path) {
     double value = 0;
