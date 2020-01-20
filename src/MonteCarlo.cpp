@@ -21,6 +21,7 @@
 * @param[out] ic largeur de l'intervalle de confiance
 */
 void MonteCarlo::price(double &prix, double &ic) {
+    //TODO: PARALLELISER MONTE CARLO
     PnlMat* path = pnl_mat_create(opt_->getTimeSteps() + 1, mod_->getSize());
     prix = 0;
     double var = 0;
