@@ -24,191 +24,24 @@
  */
 class BlackScholesModel {
 
-private:
-
-    /**
-     * \brief size_ correspond au nombre d'actifs du modèle.
-     *
-     */
-    int size_;
-
-    /**
-     * \brief r_ correspond au taux d'intérêt du zéro-coupon.
-     *
-     */
-    double r_;
-
-    /**
-     * \brief rho_ correspond au paramètre de corrélation du modèle.
-     *
-     */
-    double rho_;
-
-    /**
-     * \brief *sigma correspond au vecteur de volatilités.
-     *
-     */
-    PnlVect *sigma_;
-
-    /**
-     * \brief *spot_ correspond au vecteur de valeurs initiales des sous-jacents.
-     *
-     */
-    PnlVect *spot_;
-
-    /**
-     * \brief *trend_ correspond au vecteur des rentabilités moyennes des sous-jacents.
-     *
-     */
-    PnlVect *trend_;
-
 public:
 
-    /**
-     * \brief Getter de l'attribut \refitem size_
-     *
-     * @return l'attribut \refitem size_
-     *
-     */
-    int getSize() {
-        return size_;
-    }
-
-    /**
-     * \brief Getter de l'attribut \refitem r_
-     *
-     * @return l'attribut \refitem r_
-     *
-     */
-    double getR() {
-        return r_;
-    }
-
-    /**
-     * \brief Getter de l'attribut \refitem rho_
-     *
-     * @return l'attribut \refitem rho_
-     *
-     */
-    double getRho() {
-        return rho_;
-    }
-
-    /**
-     * \brief Getter de l'attribut \refitem sigma_
-     *
-     * @return l'attribut \refitem sigma_
-     *
-     */
-    PnlVect *getSigma() {
-        return sigma_;
-    }
-
-    /**
-     * \brief Getter de l'attrivut \refitem spot_
-     *
-     * @return l'attribut \refitem spot_
-     *
-     */
-    PnlVect *getSpot() {
-        return spot_;
-    }
-
-    /**
-     * \brief Getter de l'attrivut \refitem trend_
-     *
-     * @return l'attribut \refitem trend_
-     *
-     */
-    PnlVect *getTrend() {
-        return trend_;
-    }
-
-    /**
-     * \brief Setter de l'attribut \refitem size_
-     *
-     * @param newSize le nouveau nombre d'actifs du modèle, \refitem size_
-     *
-     */
-    void setSize(int newSize) {
-        size_ = newSize;
-    }
-
-    /**
-     * \brief Setter de l'attribut \refitem r_
-     *
-     * @param newR le nouveau taux d'intérêt du ZC, \refitem r_
-     */
-    void setR(double newR) {
-        r_ = newR;
-    }
-
-    /**
-     * \brief Setter de l'attribut \refitem rho_
-     *
-     * @param newRho la nouvelle corrélation du modèle, \refitem rho_
-     *
-     */
-    void setRho(double newRho) {
-        rho_ = newRho;
-    }
-
-    /**
-     * \brief Setter de l'attribut \refitem sigma_
-     *
-     * @param newSigma le nouveau vecteur de volatilités du modèle, \refitem sigma_
-     *
-     */
-    void setSigma(PnlVect *newSigma) {
-        sigma_ = newSigma;
-    }
-
-    /**
-     * \brief Setter de l'attribut \refitem spot_
-     *
-     * @param newSpot le nouveau vecteur des spots initiaux du modèle, \refitem spot_
-     *
-     */
-    void setSpot(PnlVect *newSpot) {
-        spot_ = newSpot;
-    }
-
-    /**
-     * \brief Setter de l'attribut \refitem trend_
-     *
-     * @param newTrend le nouveau vecteur des rentabilités du modèle, \refitem trend_
-     *
-     */
-    void setTrend(PnlVect *newTrend) {
-        trend_ = newTrend;
-    }
+    int size_; /// correspond au nombre d'actifs du modèle.
+    double r_; /// correspond au taux d'intérêt du zéro-coupon.
+    double rho_; /// correspond au paramètre de corrélation du modèle.
+    PnlVect *sigma_; /// correspond au vecteur de volatilités.
+    PnlVect *spot_; /// correspond au vecteur de valeurs initiales des sous-jacents.
+    PnlMat *gammaCholesky; /// Cholesky matrix of the correlation matrix
+    PnlVect *scalarProductColumn; /// to store the column for the scalar product
+    PnlVect *computationsRSigma; /// to compute r-sigma*sigma/2
 
     /**
      * \brief Constructeur du BSModel.
      *
      */
-    BlackScholesModel(int size, double r, double rho, PnlVect *sigma, PnlVect *spot) {
-        this->size_ = size;
-        this->r_ = r;
-        this->rho_ = rho;
-        this->sigma_ = sigma;
-        this->spot_ = spot;
-    }
+    BlackScholesModel(int size, double r, double rho, PnlVect *sigma, PnlVect *spot);
 
-    /**
-     * \brief Constructeur du BSModel avec les rentabilités moyennes.
-     *
-     */
-    BlackScholesModel(int size, double r, double rho, PnlVect *sigma, PnlVect *spot, PnlVect *trend) {
-        this->size_ = size;
-        this->r_ = r;
-        this->rho_ = rho;
-        this->sigma_ = sigma;
-        this->spot_ = spot;
-        this->trend_ = trend;
-    }
-
-    ~BlackScholesModel(){}
+    ~BlackScholesModel();
 
     /**
      * Génère une trajectoire du modèle et la stocke dans path

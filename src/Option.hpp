@@ -23,57 +23,11 @@
 class Option {
 
 
-protected:
-
-    /**
-     * \brief T_ représente la maturité de l'option.
-     *
-     */
-    double T_;
-
-    /**
-     * \brief optionSize représente la dimension du modèle (redondant avec BlackScholesModel).
-     *
-     */
-    int size_;
-
-    /**
-     * \brief nbTimeSteps_ représente le nombre de pas de temps de discrétisation.
-     *
-     */
-    int nbTimeSteps_;
-
 public:
+    double T_; /// représente la maturité de l'option.
+    int size_; /// représente la dimension du modèle (redondant avec BlackScholesModel).
+    int nbTimeSteps_; /// représente le nombre de pas de temps de discrétisation.
 
-    /**
-     * \brief Getter de l'attribut \refitem T_
-     *
-     * @return la maturité de l'option, \refitem T_
-     *
-     */
-    double getMaturity() {
-        return T_;
-    }
-
-    /**
-     * \brief Getter de l'attribut \refitem size_
-     *
-     * @return la dimension du modèle, \refitem size_
-     *
-     */
-    int getSize() {
-        return size_;
-    }
-
-    /**
-     * \brief Getter de l'attribut \refitem nbTimeSteps_
-     *
-     * @return le nombre de pas de temps discrétisé, \refitem nbTimeSteps_
-     *
-     */
-    int getTimeSteps() {
-        return nbTimeSteps_;
-    }
 
     /**
      * \brief payoff calcule la valeur du payoff sur la trajectoire.
@@ -84,13 +38,8 @@ public:
      */
     virtual double payoff(const PnlMat *path) = 0;
 
-//    friend std::ostream &operator<<(std::ostream &os, const Option &option);
 };
-//
-//std::ostream &operator<<(std::ostream &os, const Option &option) {
-//    os << "T_: " << option.T_ << "\nsize_: " << option.size_ << "\nnbTimeSteps_: " << option.nbTimeSteps_;
-//    return os;
-//}
+
 
 
 #endif //PROJETMODPRO_OPTION_H

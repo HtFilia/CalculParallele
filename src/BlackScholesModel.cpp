@@ -13,15 +13,49 @@
 #include "BlackScholesModel.hpp"
 #include "math.h"
 
-/**
- * Génère une trajectoire du modèle et la stocke dans path
- *
- * @param[out] path contient une trajectoire du modèle.
- * C'est une matrice de taille (nbTimeSteps+1) x d
- * @param[in] T  maturité
- * @param[in] nbTimeSteps nombre de dates de constatation
- */
-void BlackScholesModel::asset(PnlMat *path, double T, int nbTimeSteps, PnlRng *rng) {
+double compute_r_sigma(double a, double b)
+{
+    return a - b * b / 2;
+}
+
+BlackScholesModel::BlackScholesModel(int size, double r, double rho, PnlVect *sigma, PnlVect *spot)
+{
+    size_ = size;
+    r_ = r;
+    rho_ = rho;
+    sigma_ = sigma;
+    spot_ = spot;
+
+    // to compute the scalar product
+    scalarProductColumn = pnl_vect_create(size_);
+
+    computationsRSigma = pnl_vect_create_from_double(size_, r);
+    pnl_vect_map_vect_inplace(computationsRSigma, sigma, compute_r_sigma);
+
+    // Single dimension BlackScholes
+    if (rho == 1)
+    {
+        size_ = 1;
+    }
+    // creation of the correlation matrix
+    gammaCholesky = pnl_mat_create_from_double(size_, size_, rho);
+    for (int i = 0; i < size_; i++)
+    {
+        pnl_mat_set_diag(gammaCholesky, 1.0, i);
+    }
+    // calcul of the Cholesky matrix
+    pnl_mat_chol(gammaCholesky);
+}
+
+BlackScholesModel::~BlackScholesModel()
+{
+    pnl_mat_free(&gammaCholesky);
+    pnl_vect_free(&scalarProductColumn);
+    pnl_vect_free(&computationsRSigma);
+}
+
+void BlackScholesModel::asset(PnlMat *path, double T, int nbTimeSteps, PnlRng *rng)
+{
     // Calcul du timestep
     double timestep = T / (double)nbTimeSteps;
 

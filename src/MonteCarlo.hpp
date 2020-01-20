@@ -31,150 +31,16 @@
 
 class MonteCarlo {
 
-private:
-
-    /**
-     * \brief pointeur vers le modèle utilisé.
-     *
-     */
-    BlackScholesModel *mod_;
-
-    /**
-     * \brief pointeur vers l'option utilisée.
-     *
-     */
-    Option *opt_; /*! pointeur sur l'option */
-
-    /**
-     * \brief pointeur vers le générateur aléatoire utilisé.
-     *
-     */
-    PnlRng *rng_; /*! pointeur sur le générateur */
-
-    /**
-     * \brief pas de différence finie.
-     *
-     */
-    double fdStep_; /*! pas de différence finie */
-
-    /**
-     * \brief nombre de tirages Monte Carlo souhaité.
-     *
-     */
-    int nbSamples_; /*! nombre de tirages Monte Carlo */
-
-
 public:
+    BlackScholesModel *mod_; /// pointeur vers le modèle utilisé.
+    Option *opt_; /// pointeur sur l'option
+    PnlRng *rng_; /// pointeur sur le générateur
+    double fdStep_; ///pas de différence finie
+    int nbSamples_; /// nombre de tirages Monte Carlo
 
+    MonteCarlo(BlackScholesModel *mod, Option *opt, PnlRng *rng, double fdStep, int nbSamples);
 
-    /**
-     * \brief Getter de l'attribut \refitem mod_
-     *
-     * @return le pointeur vers le modèle utilisé, \refitem mod_
-     *
-     */
-    BlackScholesModel* getMod() {
-        return mod_;
-    }
-
-    /**
-     * \brief Getter de l'attribut \refitem opt_
-     *
-     * @return le pointeur vers l'option utilisée, \refitem opt_
-     *
-     */
-    Option* getOption() {
-        return opt_;
-    }
-
-    /**
-    * \brief Getter de l'attribut \refitem rng_
-    *
-    * @return le pointeur vers générateur aléatoire utilisé, \refitem rng_
-    *
-    */
-    PnlRng* getRng() {
-        return rng_;
-    }
-
-    /**
-     * \brief Getter de l'attribut \refitem fdStep_
-     *
-     * @return le pas de différence finie, \refitem fdStep_
-     *
-     */
-    double getStep() {
-        return fdStep_;
-    }
-
-    /**
-     * \brief Getter de l'attribut \refitem nbSamples_
-     *
-     * @return le nombre de tirages Monte Carlo souhaité, \refitem nbSamples_
-     *
-     */
-    int getSampleSize() {
-        return nbSamples_;
-    }
-
-    /**
-     * \brief Setter de l'attribut \refitem mod_
-     *
-     * @param[in] newModel le nouveau modèle utilisé.
-     *
-     */
-    void setMod(BlackScholesModel* newModel) {
-        mod_ = newModel;
-    }
-
-    /**
-     * \brief Setter de l'attribut \refitem opt_
-     *
-     * @param[in] newOption la nouvelle option utilisée.
-     *
-     */
-    void setOption(Option* newOption) {
-        opt_ = newOption;
-    }
-
-    /**
-     * \brief Setter de l'attribut \refitem rng_
-     *
-     * @param[in] newRng le nouveau générateur aléatoire utilisé.
-     *
-     */
-    void setRng(PnlRng* newRng) {
-        rng_ = newRng;
-    }
-
-    /**
-     * \brief Setter de l'attribut \refitem fdStep_
-     *
-     * @param[in] newStep le nouveau pas de différence finie, \refitem fdStep_
-     *
-     */
-    void setStep(double newStep) {
-        fdStep_ = newStep;
-    }
-
-    /**
-     * \brief Setter de l'attribut \refitem nbSamples_
-     *
-     * @param[in] newSampleSize le nouveau nombre de tirages Monte Carlo souhaité, \refitem nbSamples_
-     */
-    void setSampleSize(int newSampleSize) {
-        nbSamples_ = newSampleSize;
-    }
-
-    MonteCarlo(BlackScholesModel *mod, Option *opt, PnlRng *rng, double fdStep, int nbSamples) {
-        this->mod_ = mod;
-        this->opt_ = opt;
-        this->rng_ = rng;
-        this->fdStep_ = fdStep;
-        this->nbSamples_ = nbSamples;
-    }
-
-    ~MonteCarlo(){}
+    ~MonteCarlo();
 
     /**
     * Calcule le prix de l'option à la date 0

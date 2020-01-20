@@ -29,21 +29,9 @@ using namespace std;
  */
 class Basket: public Option {
 
-private:
-
-	/**
-	 * \brief K_ représente le strike de l'option.
-	 *
-	 */
-	double K_;
-
-	/**
-	 * \brief lambda_ représente le vecteur des coefficients de l'option.
-	 *
-	 */
-	PnlVect *lambda_;
-
 public:
+	double K_; /// représente le strike de l'option.
+	PnlVect *lambda_; /// représente le vecteur des coefficients de l'option.
 
 	/**
 	 * \brief Constructeur du Basket Option.
@@ -53,24 +41,10 @@ public:
 
 	Basket(const char *InputFile);
 
-    //destructuer n'a pas à libérer le lambda, vous devez libérer les pnl_vect vous memes dans les tests selon moi
+	/**
+	 * \brief Destructeur du Basket
+	 */
 	~Basket();
-
-	/**
-	* \brief Getter du strike de l'option, \refitem K_
-	*
-	* @return L'attribut \refitem K_
-	*
-	*/
-    double getK() const;
-
-	/**
-	* \brief Getter des coefficients de payoff de l'option, \refitem lambda_
-	*
-	* @return L'attribut \refitem lambda_
-	*
-	*/
-    PnlVect* getLambda() const;
 
     /**
      * \brief Calcule le payoff de l'option Basket suivant le marché qu'on lui donne.
@@ -82,14 +56,6 @@ public:
      *
      */
 	double payoff(const PnlMat *path);
-
-	/**
-	* \brief TODO
-	*
-	*/
-    void RedirectToFile(const char *path);
-
-    void setLambda(PnlVect *lambda);
 };
 
 #endif //PROJETMODPRO_BASKET_H
