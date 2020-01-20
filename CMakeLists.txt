@@ -72,11 +72,8 @@ target_link_libraries(test-pricer0 jl_parser ${LIBS})
 
 
 # Applications finales
-add_executable(price0 src/apps/price0.cpp ${SRC})
-target_link_libraries(price0 jl_parser ${LIBS})
-
-add_executable(hedge src/apps/hedge.cpp ${SRC})
-target_link_libraries(hedge jl_parser ${LIBS})
+add_executable(pricer src/apps/pricer.cpp ${SRC})
+target_link_libraries(pricer jl_parser ${LIBS})
 
 # Print compiler flags
 get_directory_property(DirDefs COMPILE_DEFINITIONS)
