@@ -23,6 +23,7 @@
 #include "../MonteCarlo.hpp"
 #include "pnl/pnl_vector.h"
 #include "pnl/pnl_matrix.h"
+#include "mpi.h"
 
 using namespace std;
 

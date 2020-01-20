@@ -28,6 +28,11 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
     add_definitions(-DPNL_RANGE_CHECK_OFF)
 endif()
 
+# Detect MPI
+find_package(MPI REQUIRED)
+set (LIBS ${LIBS} ${MPI_LIBRARIES})
+include_directories(${MPI_INCLUDE_PATH})
+
 # Add math lib
 set(LIBS ${LIBS} m)
 file(GLOB SRC
