@@ -26,15 +26,9 @@
 
 class Performance: public Option {
 
-private:
-
-    /**
-     * \brief lambda_ représente le vecteur des coefficients de l'option.
-     *
-     */
-    PnlVect *lambda_;
-
 public:
+
+    PnlVect *lambda_; /// représente le vecteur des coefficients de l'option.
 
     /**
      * \brief Constructeur du Performance Option.
@@ -52,7 +46,6 @@ public:
     /**
      * Destructeur
      */
-    //destructuer n'a pas à libérer le lambda, vous devez libérer les pnl_vect vous memes dans les tests selon moi
     ~Performance();
 
     /**
@@ -65,8 +58,6 @@ public:
      *
      */
     double payoff(const PnlMat *path);
-
-    void setLambda(PnlVect *lambda);
 };
 
 #endif //PROJETMODPRO_PERFORMANCE_H

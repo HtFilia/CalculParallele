@@ -25,24 +25,12 @@
  */
 class Asian: public Option {
 
-private:
-
-    /**
-     * \brief K_ représente le strike de l'option.
-     *
-     */
-    double K_;
-
-    /**
-     * \brief lambda_ représente le vecteur des coefficients de l'option.
-     *
-     */
-    PnlVect *lambda_;
-
 public:
+    double K_; /// représente le strike de l'option.
+    PnlVect *lambda_; /// représente le vecteur des coefficients de l'option.
 
     /**
-     * \brief Constructeur du Basket Option.
+     * \brief Constructeur du Asian Option.
      *
      */
     Asian(double strike, double maturity, int size, int nbTimeSteps, PnlVect* lambda);
@@ -62,17 +50,15 @@ public:
     */
     ~Asian();
 
-    void setLambda(PnlVect *lambda);
-
     /**
-     * \brief Calcule le payoff de l'option Basket suivant le marché qu'on lui donne.
-     *
-     * @param[out] path le marché contenant les spots des sous-jacents
-     * 					aux différents temps étudiés.
-     *
-     * @return la valeur du payoff du Call.
-     *
-     */
+    * \brief Calcule le payoff de l'option Basket suivant le marché qu'on lui donne.
+    *
+    * @param[out] path le marché contenant les spots des sous-jacents
+    * 					aux différents temps étudiés.
+    *
+    * @return la valeur du payoff du Call.
+    *
+    */
     double payoff(const PnlMat *path);
 };
 
