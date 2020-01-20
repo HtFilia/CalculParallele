@@ -35,6 +35,7 @@ void BlackScholesModel::asset(PnlMat *path, double T, int nbTimeSteps, PnlRng *r
 
     // Calcul de G
     PnlMat* G = pnl_mat_create(nbTimeSteps, size_);
+    //TODO: PEUT ETRE PARALLELISE
     pnl_mat_rng_normal(G, nbTimeSteps, size_, rng);
     PnlVect* G_i = pnl_vect_create(size_);
 

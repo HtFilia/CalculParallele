@@ -93,10 +93,6 @@ int main(int argc, char **argv) {
     // Create MonteCarlo according to parameters
     MonteCarlo *monteCarlo = new MonteCarlo(bsModel, option, rng, fdSteps, n_samples);
 
-    // Create initial Market according to parameters
-    PnlMat *past0 = pnl_mat_create(1, size);
-    pnl_mat_set_row(past0, spot, 0);
-
     // Resultat variables
     double prix = 0;
     double prix_std_dev = 0;
