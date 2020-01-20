@@ -103,8 +103,7 @@ int main(int argc, char **argv) {
     PnlVect *delta_std_dev = pnl_vect_create(size);
 
     // Get price, deltas and st.deviation
-    monteCarlo->price(past0, 0, prix, prix_std_dev);
-    monteCarlo->delta(past0, 0, delta, delta_std_dev);
+    monteCarlo->price(prix, prix_std_dev);
 
     // Print Results
     PricingResults res(prix, prix_std_dev, delta, delta_std_dev);

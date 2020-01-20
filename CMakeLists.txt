@@ -70,21 +70,6 @@ target_link_libraries(test-asset jl_parser ${LIBS})
 add_executable(test-pricer0 src/tests/testPrice0.cpp ${SRC})
 target_link_libraries(test-pricer0 jl_parser ${LIBS})
 
-add_executable(test-pricert src/tests/testPriceT.cpp ${SRC})
-target_link_libraries(test-pricert jl_parser ${LIBS})
-
-add_executable(test-shift src/tests/testShiftAsset.cpp ${SRC})
-target_link_libraries(test-shift jl_parser ${LIBS})
-
-add_executable(test-deltas src/tests/testDeltas.cpp ${SRC})
-target_link_libraries(test-deltas jl_parser ${LIBS})
-
-add_executable(test-couverture src/tests/testProfitAndLoss.cpp ${SRC})
-target_link_libraries(test-couverture jl_parser ${LIBS})
-
-add_executable(test-simulmarket src/tests/testSimulMarket.cpp ${SRC})
-target_link_libraries(test-simulmarket jl_parser ${LIBS})
-
 
 # Applications finales
 add_executable(price0 src/apps/price0.cpp ${SRC})

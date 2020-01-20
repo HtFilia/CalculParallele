@@ -36,16 +36,11 @@ int main(int argc, char *argv[]) {
 
     std::cout << std::endl << std::endl;
 
-    PnlMat* path = pnl_mat_create(N+1, d);
-    double t = (N1 - 0.5) * (T / (double)N);
-    bsModel->asset(path, t, T, N, rng, past);
-    pnl_mat_print(path);
 
     //free
     pnl_vect_free(&sigma);
     pnl_vect_free(&spot);
     delete bsModel;
-    pnl_mat_free(&path);
     pnl_rng_free(&rng);
 
     return 0;
