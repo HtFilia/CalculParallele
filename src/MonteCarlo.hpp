@@ -37,6 +37,7 @@ public:
     PnlRng *rng_; /// pointeur sur le générateur
     double fdStep_; ///pas de différence finie
     int nbSamples_; /// nombre de tirages Monte Carlo
+    PnlMat *path; /// matrice pour stocker les niveaux des spots
 
     MonteCarlo(BlackScholesModel *mod, Option *opt, PnlRng *rng, double fdStep, int nbSamples);
 

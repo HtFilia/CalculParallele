@@ -56,45 +56,21 @@ BlackScholesModel::~BlackScholesModel()
 
 void BlackScholesModel::asset(PnlMat *path, double T, int nbTimeSteps, PnlRng *rng)
 {
-    // Calcul du timestep
-    double timestep = T / (double)nbTimeSteps;
-
-    // Calcul de L
-    PnlMat* L = pnl_mat_create_from_scalar(size_, size_, rho_);
-    for (int d = 0; d < size_; d++) {
-        pnl_mat_set(L, d, d, 1);
-    }
-    pnl_mat_chol(L);
-    PnlVect* L_d = pnl_vect_create(size_);
-
-    // Calcul de G
-    PnlMat* G = pnl_mat_create(nbTimeSteps, size_);
-    //TODO: PEUT ETRE PARALLELISE
-    pnl_mat_rng_normal(G, nbTimeSteps, size_, rng);
-    PnlVect* G_i = pnl_vect_create(size_);
-
-    // On copie les spots sur le marché
+    double delta_t = T / (double)nbTimeSteps;
     pnl_mat_set_row(path, spot_, 0);
 
-    // Pour chaque temps t_i
-    for (int i = 1; i <= nbTimeSteps; i++) {
-        // Récupération de G_i
-        pnl_mat_get_row(G_i, G, i - 1);
+    // creation of G
+    PnlMat gaussian = pnl_mat_wrap_mat_rows(path, 1, nbTimeSteps);
+    PnlVect row;
+    pnl_mat_rng_normal(&gaussian, nbTimeSteps, size_, rng);
 
-        // Pour chaque spot d
-        for (int d = 0; d < size_; d++) {
-            // Récupération de L_d
-            pnl_mat_get_row(L_d, L, d);
-
-            // Calcul de l'élément (t_i, d) de la matrice en fonction de l'élément (t_(i-1), d)
-            double exposant = (r_ - SQR(GET(sigma_, d)) / 2) * timestep + GET(sigma_, d) * sqrt(timestep) * pnl_vect_scalar_prod(L_d, G_i);
-            pnl_mat_set(path, i, d, pnl_mat_get(path, i - 1, d) * exp(exposant));
+    for (int i = 1; i <= nbTimeSteps; i++)
+    {
+        pnl_mat_get_row(scalarProductColumn, path, i);
+        for (int d = 0; d < size_; d++)
+        {
+            row = pnl_vect_wrap_mat_row(gammaCholesky, d);
+            MLET(path, i, d) = MGET(path, i - 1, d) * exp(GET(computationsRSigma, d) * delta_t + GET(sigma_, d) * sqrt(delta_t) * pnl_vect_scalar_prod(&row, scalarProductColumn));
         }
     }
-
-    //free
-//    pnl_vect_free(&G_i);
-//    pnl_vect_free(&L_d);
-//    pnl_mat_free(&L);
-//    pnl_mat_free(&G);
 }
