@@ -23,17 +23,11 @@
 #include "../MonteCarlo.hpp"
 #include "pnl/pnl_vector.h"
 #include "pnl/pnl_matrix.h"
-#include "mpi.h"
+//#include "mpi.h"
 
 using namespace std;
 
 int main(int argc, char **argv) {
-
-    // Parallelisation
-    MPI_Init(&argc, &argv);
-    int size, rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
 
     // Option variables
     double T, strike, payoffCoeff;
@@ -100,26 +94,31 @@ int main(int argc, char **argv) {
     auto *monteCarlo = new MonteCarlo(bsModel, option, rng, fdSteps, n_samples);
 
     // Resultat variables
+    int nb_tirage = 0;
     double prix = 0;
     double prix_std_dev = 0;
-    PnlVect *delta = pnl_vect_create(optionSize);
-    PnlVect *delta_std_dev = pnl_vect_create(optionSize);
+    clock_t time;
 
-    // Get price, deltas and st.deviation
-    monteCarlo->price(prix, prix_std_dev);
-
-    //monteCarlo->price(prix, prix_std_dev);
+    // Get price
+    if (argc == 2) {
+        time = clock();
+        monteCarlo->price(nb_tirage, prix, prix_std_dev);
+        time = clock() - time;
+    } else if (argc == 3) {
+        time = clock();
+        monteCarlo->price_with_prec(atof(argv[2]), nb_tirage, prix, prix_std_dev);
+        time = clock() - time;
+    }
 
     // Print Results
-    std::cout << '{' << "\"price\": " << prix << ", \"priceStdDev\": " << prix_std_dev << '}' << std::endl;
+    PricingResults res(nb_tirage, prix, prix_std_dev, time);
+    std::cout << res << std::endl;
 
-    // End
-    MPI_Finalize();
+    //free
     pnl_vect_free(&spot);
     pnl_vect_free(&sigma);
     pnl_vect_free(&divid);
     pnl_rng_free(&rng);
-
     delete P;
     delete option;
     delete bsModel;

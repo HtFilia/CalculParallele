@@ -29,13 +29,8 @@ MonteCarlo::~MonteCarlo()
     pnl_mat_free(&path);
 }
 
-/**
-* Calcule le prix de l'option à la date 0
-*
-* @param[out] prix valeur de l'estimateur Monte Carlo
-* @param[out] ic largeur de l'intervalle de confiance
-*/
-void MonteCarlo::price(double &prix, double &ic) {
+
+void MonteCarlo::price(int &nb_tirage, double &prix, double &ic) {
     //TODO: PARALLELISER MONTE CARLO
     prix = 0;
     double var = 0;
@@ -47,7 +42,28 @@ void MonteCarlo::price(double &prix, double &ic) {
         var += tmp * tmp;
     }
 
+    nb_tirage = nbSamples_;
     prix = exp(- mod_->r_ * opt_->T_) * prix / nbSamples_;
     var = exp(-2 * mod_->r_ * opt_->T_) * var / nbSamples_ - SQR(prix);
     ic = sqrt(var / (double)nbSamples_);
+}
+
+void MonteCarlo::price_with_prec(double prec, int &nb_tirage, double &prix, double &ic) {
+    //TODO: PARALLELISER MONTE CARLO
+    prix = 0;
+    double var = 0;
+    bool test = true;
+
+    for (int i = 1; test || i < 3; i++) {
+        mod_->asset(path, opt_->T_, opt_->nbTimeSteps_, rng_);
+        double tmp = opt_->payoff(path);
+        prix += tmp;
+        var += tmp * tmp;
+        test = (exp(- mod_->r_ * opt_->T_) * sqrt(var - SQR(prix) / i) / (double)i > prec);
+        nb_tirage = i;
+    }
+
+    prix = exp(- mod_->r_ * opt_->T_) * prix / nb_tirage;
+    var = exp(-2 * mod_->r_ * opt_->T_) * var / nb_tirage - SQR(prix);
+    ic = sqrt(var / (double)nb_tirage);
 }
