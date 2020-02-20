@@ -4,7 +4,6 @@
 
 std::ostream& operator<<(std::ostream &stm, const PricingResults &res)
 {
-    stm << '{' << "\"price\": " << res.price << ", \"priceStdDev\": " << res.priceStdDev << ", \"delta\": ";
-    stm << res.delta << ", \"deltaStdDev\": " << res.deltaStdDev << '}';
+    stm << '{' << "\"price\": " << res.price << ", \"priceStdDev\": " << res.priceStdDev << '}';
     return stm;
 }
