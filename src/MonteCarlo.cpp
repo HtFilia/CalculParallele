@@ -54,13 +54,15 @@ void MonteCarlo::price_with_prec(double prec, int &nb_tirage, double &prix, doub
     double var = 0;
     bool test = true;
 
-    for (int i = 1; test || i < 3; i++) {
-        mod_->asset(path, opt_->T_, opt_->nbTimeSteps_, rng_);
-        double tmp = opt_->payoff(path);
-        prix += tmp;
-        var += tmp * tmp;
-        test = (exp(- mod_->r_ * opt_->T_) * sqrt(var - SQR(prix) / i) / (double)i > prec);
-        nb_tirage = i;
+    for (int i = 0; test; i+=100) {
+        for (int j = 0; j < 100; j++) {
+            mod_->asset(path, opt_->T_, opt_->nbTimeSteps_, rng_);
+            double tmp = opt_->payoff(path);
+            prix += tmp;
+            var += tmp * tmp;
+        }
+        nb_tirage = i + 100;
+        test = (exp(- mod_->r_ * opt_->T_) * sqrt(var - SQR(prix) / nb_tirage) / (double)nb_tirage > prec);
     }
 
     prix = exp(- mod_->r_ * opt_->T_) * prix / nb_tirage;
