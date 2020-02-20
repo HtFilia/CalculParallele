@@ -29,11 +29,17 @@ using namespace std;
 
 int main(int argc, char **argv) {
 
+    // Parallelisation
+    MPI_Init(&argc, &argv);
+    int size, rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+
     // Option variables
     double T, strike, payoffCoeff;
     PnlVect *divid, *lambda;
     string type;
-    int size;
+    int optionSize;
     int timestepNumber;
     Option *option;
 
@@ -55,9 +61,9 @@ int main(int argc, char **argv) {
     // Option Parsing
     P->extract("option type", type);
     P->extract("maturity", T);
-    P->extract("option size", size);
+    P->extract("option size", optionSize);
     P->extract("timestep number", timestepNumber);
-    P->extract("payoff coefficients", lambda, size);
+    P->extract("payoff coefficients", lambda, optionSize);
 
     // Spot only for basket and asian
     //TODO : améliorable comme la formule en ligne 76
@@ -66,13 +72,13 @@ int main(int argc, char **argv) {
     }
 
     // BSModel Parsing
-    P->extract("spot", spot, size);
-    P->extract("volatility", sigma, size);
+    P->extract("spot", spot, optionSize);
+    P->extract("volatility", sigma, optionSize);
     P->extract("interest rate", r);
     P->extract("correlation", rho);
-    if (P->extract("dividend rate", divid, size, true) == false)
+    if (! P->extract("dividend rate", divid, optionSize, true))
     {
-        divid = pnl_vect_create_from_zero(size);
+        divid = pnl_vect_create_from_zero(optionSize);
     }
 
     // MonteCarlo Parsing and variables
@@ -80,37 +86,40 @@ int main(int argc, char **argv) {
 
     // Create Option according to parameters
     if (type == "basket") {
-        option = new Basket(strike, T, size, timestepNumber, lambda);
+        option = new Basket(strike, T, optionSize, timestepNumber, lambda);
     } else if (type == "asian") {
-        option = new Asian(strike, T, size, timestepNumber, lambda);
+        option = new Asian(strike, T, optionSize, timestepNumber, lambda);
     } else if (type == "performance") {
-        option = new Performance(T, size, timestepNumber, lambda);
+        option = new Performance(T, optionSize, timestepNumber, lambda);
     }
 
     // Create BSModel according to parameters
-    BlackScholesModel *bsModel = new BlackScholesModel(size, r, rho, sigma, spot);
+    auto *bsModel = new BlackScholesModel(optionSize, r, rho, sigma, spot);
 
     // Create MonteCarlo according to parameters
-    MonteCarlo *monteCarlo = new MonteCarlo(bsModel, option, rng, fdSteps, n_samples);
+    auto *monteCarlo = new MonteCarlo(bsModel, option, rng, fdSteps, n_samples);
 
     // Resultat variables
     double prix = 0;
     double prix_std_dev = 0;
-    PnlVect *delta = pnl_vect_create(size);
-    PnlVect *delta_std_dev = pnl_vect_create(size);
+    PnlVect *delta = pnl_vect_create(optionSize);
+    PnlVect *delta_std_dev = pnl_vect_create(optionSize);
 
     // Get price, deltas and st.deviation
     monteCarlo->price(prix, prix_std_dev);
 
-    // Print Results
-    PricingResults res(prix, prix_std_dev, delta, delta_std_dev);
-    std::cout << res << std::endl;
+    //monteCarlo->price(prix, prix_std_dev);
 
-    //free
+    // Print Results
+    std::cout << '{' << "\"price\": " << prix << ", \"priceStdDev\": " << prix_std_dev << '}' << std::endl;
+
+    // End
+    MPI_Finalize();
     pnl_vect_free(&spot);
     pnl_vect_free(&sigma);
     pnl_vect_free(&divid);
     pnl_rng_free(&rng);
+
     delete P;
     delete option;
     delete bsModel;
