@@ -4,6 +4,11 @@
 
 std::ostream& operator<<(std::ostream &stm, const PricingResults &res)
 {
-    stm << '{' << "\"price\": " << res.price << ", \"priceStdDev\": " << res.priceStdDev << '}';
+    stm << '{';
+    stm << "\"iterations\": " << res.nb_tirage;
+    stm << ", \"price\": " << res.price;
+    stm << ", \"priceStdDev\": " << res.priceStdDev;
+    stm << ", \"time\": " << ((float)res.time)/CLOCKS_PER_SEC;
+    stm << '}';
     return stm;
 }
