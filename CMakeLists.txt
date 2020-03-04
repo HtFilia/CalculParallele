@@ -57,25 +57,6 @@ if (WIN32)
 endif()
 add_subdirectory(src/3rdparty/jlparser)
 
-
-# Test the parser
-add_executable(test-parser src/tests/test_parser.cpp ${SRC})
-target_link_libraries(test-parser jl_parser ${LIBS})
-
-add_executable(mc-example src/tests/mc_example.cpp ${SRC})
-target_link_libraries(mc-example jl_parser ${LIBS})
-
-# Tests Pricer
-add_executable(test-payoff src/tests/testPayoff.cpp ${SRC})
-target_link_libraries(test-payoff jl_parser ${LIBS})
-
-add_executable(test-asset src/tests/testAsset.cpp ${SRC})
-target_link_libraries(test-asset jl_parser ${LIBS})
-
-add_executable(test-pricer0 src/tests/testPrice0.cpp ${SRC})
-target_link_libraries(test-pricer0 jl_parser ${LIBS})
-
-
 # Applications finales
 add_executable(pricer src/apps/pricer.cpp ${SRC})
 target_link_libraries(pricer jl_parser ${LIBS})

@@ -29,9 +29,14 @@ using namespace std;
 
 int main(int argc, char **argv) {
 
+    // Time variables
+    double start, end;
+
     // Parallelisation
     MPI_Init(&argc, &argv);
-    int size, rank;
+    int size, rank, tour;
+    int tiragesPerTurn = 2500;
+    double precision = atof(argv[argc - 1]);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
@@ -49,7 +54,7 @@ int main(int argc, char **argv) {
 
     // MonteCarlo variables
     size_t n_samples;
-    PnlRng *rng = pnl_rng_create(PNL_RNG_MERSENNE);
+    PnlRng *rng = pnl_rng_dcmt_create_id(rank, 1);
     pnl_rng_sseed(rng, time(NULL));
     double fdSteps = 0.00001;
 
@@ -97,7 +102,7 @@ int main(int argc, char **argv) {
     auto *bsModel = new BlackScholesModel(optionSize, r, rho, sigma, spot);
 
     // Create MonteCarlo according to parameters
-    auto *monteCarlo = new MonteCarlo(bsModel, option, rng, fdSteps, n_samples);
+    auto *monteCarlo = new MonteCarlo(bsModel, option, rng, fdSteps, tiragesPerTurn);
 
     // Resultat variables
     double prix = 0;
@@ -105,13 +110,21 @@ int main(int argc, char **argv) {
     PnlVect *delta = pnl_vect_create(optionSize);
     PnlVect *delta_std_dev = pnl_vect_create(optionSize);
 
-    // Get price, deltas and st.deviation
-    monteCarlo->price(prix, prix_std_dev);
+    // Get price according to rank
+    if (rank == 0) {
+        start = MPI_Wtime();
+        // If master aggregate results from slaves
+        monteCarlo->price_master(prix, prix_std_dev, size, precision, tour);
+        end = MPI_Wtime();
 
-    //monteCarlo->price(prix, prix_std_dev);
+        // Print Results
+        std::cout << "{" << "\"price\": " << prix << ", \"priceStdDev\": " << prix_std_dev << ", \"time\": "
+            << end - start << ", \"tirages\": " << tour * tiragesPerTurn << '}' << std::endl;
 
-    // Print Results
-    std::cout << '{' << "\"price\": " << prix << ", \"priceStdDev\": " << prix_std_dev << '}' << std::endl;
+    } else {
+        // If slave calculate then send results to master
+        monteCarlo->price_slave(rank, size);
+    }
 
     // End
     MPI_Finalize();

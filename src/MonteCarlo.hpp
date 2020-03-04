@@ -36,10 +36,10 @@ public:
     Option *opt_; /// pointeur sur l'option
     PnlRng *rng_; /// pointeur sur le générateur
     double fdStep_; ///pas de différence finie
-    int nbSamples_; /// nombre de tirages Monte Carlo
     PnlMat *path; /// matrice pour stocker les niveaux des spots
+    int tiragesPerTurn_;
 
-    MonteCarlo(BlackScholesModel *mod, Option *opt, PnlRng *rng, double fdStep, int nbSamples);
+    MonteCarlo(BlackScholesModel *mod, Option *opt, PnlRng *rng, double fdStep, int tiragesPerTurn);
 
     ~MonteCarlo();
 
@@ -49,7 +49,8 @@ public:
     * @param[out] prix valeur de l'estimateur Monte Carlo
     * @param[out] ic largeur de l'intervalle de confiance
     */
-    void price(double &prix, double &ic);
+    void price_master(double &prix, double &ic, int size, double precision, int &tour);
+    void price_slave(int rank, int size);
 };
 
 
